@@ -1,21 +1,11 @@
 import json
 from copy import copy
 
+from .abc import Collection
 from ..constants import API_PATH
 from . import Container
 
-class Containers:
-    def __init__(self, client):
-        self._client = client
-
-    # TODO: Make this whole thing an async iterator hmmmmmmMMMM?
-    # async def __aiter__(self):
-    #     return self
-
-    # async def __anext__(self):
-    #     async with self.client.session.get(API_PATH["containers"]) as r:
-
-
+class Containers(Collection):
     async def list(self, **kwargs):
         async with self._client.session.get(API_PATH["containers"], params=kwargs) as r:
             return [Container(self._client, x) for x in await r.json()]

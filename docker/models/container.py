@@ -1,18 +1,7 @@
+from .abc import Model
 from ..constants import API_PATH
 
-class Container:
-    def __init__(self, client, data):
-        self._client = client
-        self._data = data
-
-    def __getattr__(self, name):
-        if name in self._data:
-            return self._data[name]
-
-    def __repr__(self):
-        Id = self.Id
-        return f'<{self.__class__.__name__} {Id=}>'
-
+class Container(Model):
     @property
     def running(self):
         return self.State == 'running'
