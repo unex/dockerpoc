@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- get fucked -->
+<style>
+    form {
+        display: inline;
+    }
+</style>
+
+<p>Hello {{user.username}} <a href="{{url_for('logout')}}">Logout</a></p>
+
+<h3>Your Containers</h3>
+{% if not containers %}
+<i>- dust -</i>
+{% endif %}
+<table>
+    {% for c in containers %}
+    <tr>
+        <td>[{{c.Names[0][1:]}}]</td>
+        <td>[{{c.Image}}][{{c.State}}]</td>
+        <td>Ports:
+            {% for p in c.Ports %}
+            <a href="//{{request.base_url.hostname}}:{{p['PublicPort']}}" target="_blank">{{p['PublicPort']}}</a>
+            {% endfor %}
+        </td>
+        <td>
+            {% if c.running %}
+            <form action="{{url_for('user_container_action', id=c.Id, action='restart')}}" method="POST">
+                {{ form.csrf_token }}
+                <button type="submit">Restart</button>
+            </form>
+
+            <form action="{{url_for('user_container_action', id=c.Id, action='stop')}}" method="POST">
+                {{ form.csrf_token }}
+                <button type="submit">Stop</button>
+            </form>
+
+            <form action="{{url_for('user_container_action', id=c.Id, action='kill')}}" method="POST">
+                {{ form.csrf_token }}
+                <button type="submit">Kill</button>
+            </form>
+            {% else %}
+            <form action="{{url_for('user_container_action', id=c.Id, action='start')}}" method="POST">
+                {{ form.csrf_token }}
+                <button type="submit">Start</button>
+            </form>
+            {% endif %}
+        </td>
+        <td>
+            <form action="{{url_for('user_container_action', id=c.Id, action='remove')}}" method="POST">
+                {{ form.csrf_token }}
+                <button type="submit">REMOVE</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h3>Launch new container</h3>
+<form action="{{url_for('create_user_container')}}" method="POST">
+    {{ form.csrf_token }}
+    <select name="image" required>
+        {% for i, c in avaliable_containers %}
+        <option value="{{i}}">{{c.image}}</option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Launch</button>
+</form>
+
+{% endblock %}
