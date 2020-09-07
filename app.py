@@ -153,12 +153,14 @@ async def user_container_action(request: Request, id: str, action: str, user = D
     await check_owns_container(user, id)
 
     container = await docker.containers.get(id=id)
-    await getattr(container, action)() # this is cheating
 
     if action == 'remove':
+        await container.kill()
         await db.remove_user_container(container.Id)
 
         for port in container.Ports:
             USED_PORTS.remove(port['PublicPort'])
+
+    await getattr(container, action)() # this is cheating
 
     return RedirectResponse(url=app.url_path_for('root'), status_code=status.HTTP_303_SEE_OTHER)
