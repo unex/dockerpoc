@@ -34,6 +34,13 @@ https://docs.docker.com/engine/install/debian/
 sudo usermod -aG docker $(whoami)
 ```
 
+You will likely have to restart before docker will actually work
+
+Pull the container(s)
+```bash
+docker pull nginx
+```
+
 ### App
 
 ```bash
